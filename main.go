@@ -12,17 +12,18 @@ import (
 
 func main() {
 	get_conf.Read()
-	if len(os.Args) != 2 {
+	if len(os.Args) < 2 {
 		fmt.Println("Usage: go run main.go <path_to_markdown_file>")
 		os.Exit(1)
 	}
 
 	// The file path is the second argument.
-	filePath := os.Args[1]
+	msgPath := os.Args[1]
+	imgPath := os.Args[2]
 
 	// --- 2. Read File Content into a String ---
 	// Call our new function to get the file content.
-	contentString, err := read_message.Read(filePath)
+	contentString, err := read_message.Read(msgPath)
 	if err != nil {
 		// If the function returns an error, print it and exit.
 		fmt.Println(err)
@@ -31,11 +32,12 @@ func main() {
 
 	// --- 3. Print the Entire String ---
 	// Print a header and then the entire file content.
-	fmt.Printf("--- Content of %s ---\n", filePath)
+	fmt.Printf("--- Content of %s ---\n", msgPath)
 	fmt.Println(contentString)
 	fmt.Println("--- End of File ---")
 
 	// telegram_bot.Send(contentString)
-	discord_bot.Send(contentString)
-	telegram_bot.Send(contentString)
+	discord_bot.Send(contentString, imgPath)
+	telegram_bot.Send(contentString, imgPath)
+	
 }

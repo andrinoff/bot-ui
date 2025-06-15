@@ -16,14 +16,31 @@ func checkNilErr(e error) {
  }
 }
 
-func Send(message string) {
+func Send(message string, img_path string) {
 	fmt.Println("Discord sending...")
 	discord, err := discordgo.New("Bot " + BotToken)
 	checkNilErr(err)
 	discord.Open()
 	fmt.Println(message)
+	file, err := os.Open(img_path)
+	if err != nil {
+			fmt.Println("Error opening file:", err)
+			return
+	}
 	fmt.Println (os.Getenv("DISCORD_TOKEN"))
-	discord.ChannelMessageSend("1383135547597258935", message)
+	_, err = discord.ChannelMessageSendComplex("1383135547597258935", &discordgo.MessageSend{
+		Content: message,
+		Files: []*discordgo.File{
+			{
+				Name:   "image.png",
+				Reader: file,
+			},
+		},
+})
+	if err != nil {
+		fmt.Println("Error sending message:", err)
+		return
+	}	
 	fmt.Println("Message sent")
 	discord.Close()
 

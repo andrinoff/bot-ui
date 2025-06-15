@@ -6,8 +6,9 @@ import (
 	"os"
 
 	"github.com/go-telegram/bot"
+	"github.com/go-telegram/bot/models"
 )
-func Send(message string) {
+func Send(message string, image string) {
 	fmt.Println("Telegram sending...")
 	var channel_ids = []int64{
 		-1002158048191,
@@ -26,14 +27,30 @@ func Send(message string) {
 	fmt.Println(message, "connected to bot")
 
 	for _, chat_id := range channel_ids {
-		fmt.Printf("sending to %d\n", chat_id)
-		b.SendMessage(context.Background(), &bot.SendMessageParams{
+		if image != "" {
+			fmt.Printf("sending image to %d\n", chat_id)
+			file, err := os.Open(image)
+			if err != nil {
+				fmt.Printf("Error opening image file: %v\n", err)
+				continue
+			}
+			defer file.Close()
+			b.SendPhoto(context.Background(), &bot.SendPhotoParams{
 			ChatID: chat_id,
-			Text:   message,
+			Photo:  &models.InputFileUpload{Data: file},
+			Caption: message,
 			ParseMode: "MarkdownV2",
 		})
+		}else {
+			fmt.Printf("sending to %d\n", chat_id)
+
+			b.SendMessage(context.Background(), &bot.SendMessageParams{
+				ChatID: chat_id,
+				Text:   message,
+				ParseMode: "MarkdownV2",
+			})
+		}
 	}
 
 	fmt.Println("Message sent")
 }
-
