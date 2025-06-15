@@ -39,7 +39,7 @@ func Send(message string, image string) {
 			ChatID: chat_id,
 			Photo:  &models.InputFileUpload{Data: file},
 			Caption: message,
-			ParseMode: "MarkdownV2",
+			ParseMode: "Markdown",
 		})
 		}else {
 			fmt.Printf("sending to %d\n", chat_id)
